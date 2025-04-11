@@ -47,7 +47,7 @@ namespace Asp_Net_EF_Core_1.Controllers
             var project = await _context.Projects.FindAsync(id);
             if (project == null) return NotFound();
 
-            project.Name = dto.Name; // only update the fields you want
+            project.Name = dto.Name; 
 
             await _context.SaveChangesAsync();
             return NoContent();

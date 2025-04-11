@@ -20,10 +20,8 @@ namespace Asp_Net_EF_Core_1.Controllers
                 {
                     Id = e.Id,
                     Name = e.Name,
-                    JoinedDate = e.JoinedDate != null
-                        ? e.JoinedDate.ToString("yyyy-MM-dd")
-                        : null,
-                    DepartmentId = (Guid)e.DepartmentId
+                    JoinedDate = e.JoinedDate.ToString("yyyy-MM-dd"),
+                    DepartmentId = e.DepartmentId ?? Guid.Empty 
                 })
                 .ToListAsync();
 
@@ -40,10 +38,8 @@ namespace Asp_Net_EF_Core_1.Controllers
                 {
                     Id = e.Id,
                     Name = e.Name,
-                    JoinedDate = e.JoinedDate != null
-                        ? e.JoinedDate.ToString("yyyy-MM-dd")
-                        : null,
-                    DepartmentId = (Guid)e.DepartmentId
+                    JoinedDate = e.JoinedDate.ToString("yyyy-MM-dd"),
+                    DepartmentId = e.DepartmentId ?? Guid.Empty 
                 })
                 .FirstOrDefaultAsync();
 
@@ -54,7 +50,6 @@ namespace Asp_Net_EF_Core_1.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeDto dto)
         {
-            // If DepartmentId is provided, validate it
             if (dto.DepartmentId.HasValue)
             {
                 var departmentExists = await _context.Departments
@@ -71,7 +66,7 @@ namespace Asp_Net_EF_Core_1.Controllers
                 Id = Guid.NewGuid(),
                 Name = dto.Name,
                 JoinedDate = dto.JoinedDate,
-                DepartmentId = dto.DepartmentId // may be null, and that's okay
+                DepartmentId = dto.DepartmentId 
             };
 
             await _context.Employees.AddAsync(employee);
@@ -90,19 +85,16 @@ namespace Asp_Net_EF_Core_1.Controllers
 
             if (employee == null) return NotFound();
 
-            // ✅ Kiểm tra DepartmentId tồn tại
             var departmentExists = await _context.Departments.AnyAsync(d => d.Id == dto.DepartmentId);
             if (!departmentExists)
             {
                 return BadRequest($"Department with Id '{dto.DepartmentId}' does not exist.");
             }
 
-            // Cập nhật thông tin
             employee.Name = dto.Name;
             employee.JoinedDate = dto.JoinedDate;
             employee.DepartmentId = dto.DepartmentId;
 
-            // Cập nhật ProjectEmployees
             _context.ProjectEmployees.RemoveRange(employee.ProjectEmployees);
 
             employee.ProjectEmployees = dto.ProjectIds.Select(pid => new ProjectEmployee
@@ -117,7 +109,6 @@ namespace Asp_Net_EF_Core_1.Controllers
 
 
 
-        // DELETE
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
@@ -155,7 +146,8 @@ namespace Asp_Net_EF_Core_1.Controllers
                 {
                     EmployeeName = e.Name,
                     ProjectNames = e.ProjectEmployees
-                        .Select(pe => pe.Project.Name)
+                        .Where(pe => pe.Project != null) 
+                        .Select(pe => pe.Project!.Name) 
                         .ToList()
                 })
                 .ToListAsync();
@@ -167,15 +159,15 @@ namespace Asp_Net_EF_Core_1.Controllers
         public async Task<IActionResult> GetFilteredEmployees()
         {
             var result = await _context.Employees
-                .Include(e => e.Salary) // Ensure Salary is loaded
+                .Include(e => e.Salary)
                 .Where(e => e.Salary != null &&
                             e.Salary.Amount > 100 &&
                             e.JoinedDate >= new DateTime(2024, 1, 1))
                 .Select(e => new FilteredEmployeeDto
                 {
                     Name = e.Name,
-                    JoinedDate = e.JoinedDate.ToString("yyyy-MM-dd"), // format date only
-                    SalaryAmount = e.Salary.Amount
+                    JoinedDate = e.JoinedDate.ToString("yyyy-MM-dd"),
+                    SalaryAmount = e.Salary!.Amount 
                 })
                 .ToListAsync();
 

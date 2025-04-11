@@ -47,7 +47,7 @@ namespace Asp_Net_EF_Core_1.Controllers
             var department = await _context.Departments.FindAsync(id);
             if (department == null) return NotFound();
 
-            department.Name = dto.Name; // only update the fields you want
+            department.Name = dto.Name;
 
             await _context.SaveChangesAsync();
             return NoContent();

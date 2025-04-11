@@ -12,7 +12,6 @@ namespace Asp_Net_EF_Core_1.Controllers
     {
         private readonly AppDbContext _context = context;
 
-        // GET all salaries
         [HttpGet]
         public async Task<IActionResult> GetSalaries()
         {
@@ -24,7 +23,7 @@ namespace Asp_Net_EF_Core_1.Controllers
             {
                 Id = s.Id,
                 Amount = s.Amount,
-                EmployeeId = (Guid)s.EmployeeId,
+                EmployeeId = (Guid)s.EmployeeId!,
                 EmployeeName = s.Employee?.Name
             });
 
@@ -45,7 +44,7 @@ namespace Asp_Net_EF_Core_1.Controllers
             {
                 Id = salary.Id,
                 Amount = salary.Amount,
-                EmployeeId = (Guid)salary.EmployeeId,
+                EmployeeId = (Guid)salary.EmployeeId!,
                 EmployeeName = salary.Employee?.Name
             };
 
@@ -74,7 +73,6 @@ namespace Asp_Net_EF_Core_1.Controllers
             await _context.Salaries.AddAsync(salary);
             await _context.SaveChangesAsync();
 
-            // Fetch with employee info for response
             var result = new SalaryDto
             {
                 Id = salary.Id,
@@ -87,7 +85,6 @@ namespace Asp_Net_EF_Core_1.Controllers
         }
 
 
-        // PUT: Update salary by ID
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSalary(Guid id, [FromBody] UpdateSalaryDto dto)
         {
@@ -100,7 +97,6 @@ namespace Asp_Net_EF_Core_1.Controllers
             return NoContent();
         }
 
-        // DELETE
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSalary(Guid id)
         {
