@@ -6,13 +6,13 @@
         public required string Name { get; set; }
         public DateTime JoinedDate { get; set; }
 
-        public Guid DepartmentId { get; set; }
+        public Guid? DepartmentId { get; set; }
         public Department? Department { get; set; }
 
-        public Guid SalaryId { get; set; }
-        public Salary Salary { get; set; }
+        public Guid? SalaryId { get; set; }
+        public Salary? Salary { get; set; }
 
-        public ICollection<ProjectEmployee> ProjectEmployees { get; set; }
+        public ICollection<ProjectEmployee> ProjectEmployees { get; set; } = [];
 
     }
 }

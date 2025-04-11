@@ -5,7 +5,7 @@
         public Guid Id { get; set; }
         public required decimal Amount { get; set; }
 
-        public Guid EmployeeId { get; set; }
-        public Employee Employee { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public Employee? Employee { get; set; }
     }
 }

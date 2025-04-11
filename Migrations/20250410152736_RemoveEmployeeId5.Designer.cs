@@ -4,6 +4,7 @@ using Asp_Net_EF_Core_1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Asp_Net_EF_Core_1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250410152736_RemoveEmployeeId5")]
+    partial class RemoveEmployeeId5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,6 +87,10 @@ namespace Asp_Net_EF_Core_1.Migrations
 
                     b.HasIndex("DepartmentId");
 
+                    b.HasIndex("SalaryId")
+                        .IsUnique()
+                        .HasFilter("[SalaryId] IS NOT NULL");
+
                     b.ToTable("Employees");
                 });
 
@@ -127,14 +134,7 @@ namespace Asp_Net_EF_Core_1.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId")
-                        .IsUnique()
-                        .HasFilter("[EmployeeId] IS NOT NULL");
 
                     b.ToTable("Salaries");
                 });
@@ -142,10 +142,16 @@ namespace Asp_Net_EF_Core_1.Migrations
             modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.Employee", b =>
                 {
                     b.HasOne("Asp_Net_EF_Core_1.Domains.Department", "Department")
-                        .WithMany("Employees")
+                        .WithMany()
                         .HasForeignKey("DepartmentId");
 
+                    b.HasOne("Asp_Net_EF_Core_1.Domains.Salary", "Salary")
+                        .WithOne("Employee")
+                        .HasForeignKey("Asp_Net_EF_Core_1.Domains.Employee", "SalaryId");
+
                     b.Navigation("Department");
+
+                    b.Navigation("Salary");
                 });
 
             modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.ProjectEmployee", b =>
@@ -167,31 +173,19 @@ namespace Asp_Net_EF_Core_1.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.Salary", b =>
-                {
-                    b.HasOne("Asp_Net_EF_Core_1.Domains.Employee", "Employee")
-                        .WithOne("Salary")
-                        .HasForeignKey("Asp_Net_EF_Core_1.Domains.Salary", "EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.Department", b =>
-                {
-                    b.Navigation("Employees");
-                });
-
             modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.Employee", b =>
                 {
                     b.Navigation("ProjectEmployees");
-
-                    b.Navigation("Salary");
                 });
 
             modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.Project", b =>
                 {
                     b.Navigation("ProjectEmployees");
+                });
+
+            modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.Salary", b =>
+                {
+                    b.Navigation("Employee");
                 });
 #pragma warning restore 612, 618
         }

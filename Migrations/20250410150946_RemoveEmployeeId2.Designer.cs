@@ -4,6 +4,7 @@ using Asp_Net_EF_Core_1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Asp_Net_EF_Core_1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250410150946_RemoveEmployeeId2")]
+    partial class RemoveEmployeeId2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,7 +145,7 @@ namespace Asp_Net_EF_Core_1.Migrations
             modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.Employee", b =>
                 {
                     b.HasOne("Asp_Net_EF_Core_1.Domains.Department", "Department")
-                        .WithMany("Employees")
+                        .WithMany()
                         .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
@@ -175,11 +178,6 @@ namespace Asp_Net_EF_Core_1.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.Department", b =>
-                {
-                    b.Navigation("Employees");
                 });
 
             modelBuilder.Entity("Asp_Net_EF_Core_1.Domains.Employee", b =>

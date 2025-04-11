@@ -12,6 +12,7 @@ namespace Asp_Net_EF_Core_1
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddRouting(options => options.LowercaseUrls = true);
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer("Data Source=DucAnh;Initial Catalog=EFCore;Persist Security Info=True;User ID=sa;Password=123;Encrypt=True;Trust Server Certificate=True"));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
